@@ -124,7 +124,7 @@ async function cargarSelectores(formId) {
 
 function cargarSelectoresFiltros() {
     poblarSelect(document.getElementById('b-tecnica'), _tecnicas, t => t.id, t => t.nombre, 'Todas');
-    poblarSelect(document.getElementById('b-tipo'), _tipos, t => t.id, t => t.tipoObra, 'Todos');
+    poblarSelect(document.getElementById('b-tipo'), _tipos, t => t.id, t => `${t.tipoObra} (${t.material})`, 'Todos');
     poblarSelect(document.getElementById('filtro-tecnica-det'), _tecnicas, t => t.id, t => t.nombre, 'Todas');
 }
 
