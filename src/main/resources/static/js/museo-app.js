@@ -914,9 +914,9 @@ async function verDetalleRestauracion(id) {
 // INIT
 // ══════════════════════════════════════════════════
 async function init() {
+    cargarObras();
     await cargarCatalogos();
     cargarSelectoresFiltros();
-    cargarObras();
 }
 
 init();
