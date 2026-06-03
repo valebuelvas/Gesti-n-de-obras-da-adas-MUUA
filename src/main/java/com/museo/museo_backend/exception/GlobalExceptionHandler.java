@@ -1,34 +1,35 @@
 package com.museo.museo_backend.exception;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.*;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String,String>> handleRuntime(RuntimeException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
-    }
+
+    // Errores de validación (@Valid)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String,String>> handleValidation(MethodArgumentNotValidException ex) {
-        Map<String,String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(e -> errors.put(e.getField(), e.getDefaultMessage()));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
+        String mensaje = ex.getBindingResult().getFieldErrors().stream()
+                .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        return ResponseEntity.badRequest().body(Map.of("error", mensaje));
     }
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Map<String,String>> handleDataIntegrity(DataIntegrityViolationException ex) {
-        String mensaje = "Error de integridad en los datos.";
-        String causa = ex.getRootCause() != null ? ex.getRootCause().getMessage() : "";
-        if (causa.contains("email")) {
-            mensaje = "Lo sentimos, este correo ya está registrado.";
-        } else if (causa.contains("celular")) {
-            mensaje = "Lo sentimos, este número de celular ya está registrado.";
-        } else if (causa.contains("personal_museo_pkey") || causa.contains("obras_pkey") || causa.contains("pkey")) {
-            mensaje = "Lo sentimos, ya existe un registro con ese ID.";
-        } else if (causa.contains("fk_obra_deteriorada_personal") || causa.contains("fk_restauracion") || causa.contains("restauraciones")) {
-            mensaje = "No se puede cambiar el ID de este personal porque tiene registros asociados.";
-        }
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", mensaje));
+
+    // Errores de lógica de negocio (IllegalArgumentException, IllegalStateException)
+    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
+    public ResponseEntity<Map<String, String>> handleIllegal(RuntimeException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+    }
+
+    // Errores generales (RuntimeException — not found, credenciales, etc.)
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, String>> handleRuntime(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", ex.getMessage()));
     }
 }

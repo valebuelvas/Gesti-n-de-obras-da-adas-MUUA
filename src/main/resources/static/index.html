@@ -123,6 +123,11 @@
                 <div class="card-title">📋 Información de la Obra</div>
                 <form id="form-obra" onsubmit="submitObra(event)">
                     <div class="form-grid">
+
+                        <div class="form-group">
+                             <label>ID de Obra *</label>
+                             <input type="number" name="id" required placeholder="Ej: 1, 42">
+                        </div>
                         <div class="form-group full">
                             <label>Título *</label>
                             <input type="text" name="titulo" required placeholder="Título completo de la obra">
@@ -232,6 +237,11 @@
 
             <div class="card" id="resultados-busqueda" style="display:none">
                 <div class="card-title">📋 Resultados</div>
+                <div id="paginacion-busqueda" style="display:none; justify-content:center; align-items:center; gap:12px; margin-bottom:8px;">
+                    <button class="btn btn-secondary btn-sm" id="btn-prev-busqueda" onclick="cambiarPaginaBusqueda(-1)">← Anterior</button>
+                    <span id="info-pagina-busqueda" style="font-size:.85rem; color:#555"></span>
+                    <button class="btn btn-secondary btn-sm" id="btn-next-busqueda" onclick="cambiarPaginaBusqueda(1)">Siguiente →</button>
+                </div>
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -255,9 +265,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Obra *</label>
-                            <select name="idObra" required>
-                                <option value="">Seleccionar obra...</option>
-                            </select>
+                            <div id="ac-obra-deterioro"></div>
                         </div>
                         <div class="form-group">
                             <label>Personal que reporta</label>
@@ -333,7 +341,11 @@
                         <button class="btn btn-secondary" onclick="cargarDeterioro()">↺ Todo</button>
                     </div>
                 </div>
-
+                <div id="paginacion-deterioro" style="display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:8px;">
+                     <button class="btn btn-secondary btn-sm" id="btn-prev-det" onclick="cambiarPaginaDet(-1)">← Anterior</button>
+                     <span id="info-pagina-det" style="font-size:.85rem; color:#555"></span>
+                     <button class="btn btn-secondary btn-sm" id="btn-next-det" onclick="cambiarPaginaDet(1)">Siguiente →</button>
+                </div>
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -365,9 +377,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Obra Deteriorada (Código) *</label>
-                            <select name="idObraDeteriorada" required>
-                                <option value="">Seleccionar obra deteriorada...</option>
-                            </select>
+                            <div id="ac-deterioro-restauracion"></div>
                         </div>
                         <div class="form-group">
                             <label>Personal del Museo</label>
@@ -437,7 +447,11 @@
                         <button class="btn btn-secondary" onclick="cargarRestauraciones()">↺ Todo</button>
                     </div>
                 </div>
-
+                <div id="paginacion-restauraciones" style="display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:8px;">
+                    <button class="btn btn-secondary btn-sm" id="btn-prev-rest" onclick="cambiarPaginaRest(-1)">← Anterior</button>
+                    <span id="info-pagina-rest" style="font-size:.85rem; color:#555"></span>
+                    <button class="btn btn-secondary btn-sm" id="btn-next-rest" onclick="cambiarPaginaRest(1)">Siguiente →</button>
+                </div>
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -594,7 +608,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Obra *</label>
-                        <select name="idObra" required></select>
+                         <div id="ac-obra-edit-deterioro"></div>
                     </div>
                     <div class="form-group">
                         <label>Personal</label>
@@ -639,7 +653,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Obra Deteriorada *</label>
-                        <select name="idObraDeteriorada" required></select>
+                        <div id="ac-deterioro-edit-restauracion"></div>
                     </div>
                     <div class="form-group">
                         <label>Personal</label>
@@ -711,6 +725,26 @@
                     <div class="form-group">
                         <label>Celular *</label>
                         <input type="text" name="celular" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rol</label>
+                        <select name="rol">
+                            <option value="">Colaborador (por defecto)</option>
+                            <option value="colaborador">Colaborador</option>
+                            <option value="administrador">Administrador</option>
+                            <option value="no_perteneciente">No perteneciente</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="campo-password">
+                        <label id="label-password">Contraseña *</label>
+                        <input type="password" name="password" placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmar Contraseña</label>
+                        <input type="password" name="confirmarPassword" placeholder="••••••••">
+                    </div>
+                    <div class="form-group full" id="hint-password" style="display:none">
+                        <small style="color:#888">Deja en blanco para mantener la contraseña actual</small>
                     </div>
                 </div>
                 <div class="form-actions">

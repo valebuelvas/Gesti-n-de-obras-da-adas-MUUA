@@ -5,7 +5,7 @@ import java.time.LocalDate;
 @Entity @Table(name="obras")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Obra {
-    @Id @GeneratedValue(strategy=GenerationType.IDENTITY) private Integer id;
+    @Id private Integer id;
     @Column(name="titulo", nullable=false) private String titulo;
     @Column(name="autor") private String autor;
     @Column(name="fecha_creacion") private LocalDate fechaCreacion;
