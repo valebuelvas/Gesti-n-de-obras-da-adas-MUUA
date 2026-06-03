@@ -512,17 +512,23 @@ async function cargarPaginaDeterioro() {
     tb.innerHTML = '<tr><td colspan="7" class="loading">Cargando...</td></tr>';
     try {
         let res;
+        const f = _filtrosDet;
+
         if (_modoDet === 'sinRestaurar') {
             res = await api(`/obras-deterioradas/sin-restauracion-finalizada?page=${_paginaDet}&size=20`);
-        } else {
+        } else if (_modoDet === 'filtro') {
+            // ✅ Usar el endpoint correcto para filtros
             const params = new URLSearchParams({ page: _paginaDet, size: 20 });
-            const f = _filtrosDet;
             if (f.estado)    params.set('estado',    f.estado);
             if (f.autor)     params.set('autor',     f.autor);
             if (f.idTecnica) params.set('idTecnica', f.idTecnica);
             if (f.anio)      params.set('anio',      f.anio);
-            res = await api('/obras-deterioradas?' + params);
+            res = await api('/obras-deterioradas/filtrar?' + params);
+        } else {
+            // Modo 'todos' — sin filtros
+            res = await api(`/obras-deterioradas?page=${_paginaDet}&size=20`);
         }
+
         _totalDet = res.totalPages;
         renderDeterioro(res.content);
         actualizarPaginacionDet();
