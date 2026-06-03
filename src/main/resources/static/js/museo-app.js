@@ -265,6 +265,11 @@ function poblarSelect(sel, items, valFn, labelFn, placeholder = '') {
 async function cargarSelectores(formId) {
     const f = document.getElementById(formId);
     if (!f) return;
+
+    // Inicializar autocomplete inmediatamente con datos en memoria
+    if (formId === 'form-deterioro')    iniciarAutocompleteObra('ac-obra-deterioro');
+    if (formId === 'form-restauracion') iniciarAutocompleteDeteriorado('ac-deterioro-restauracion');
+
     try {
         const [tec, tip, per, obraPag, det] = await Promise.allSettled([
             api('/catalogos/tecnicas'),
@@ -273,11 +278,11 @@ async function cargarSelectores(formId) {
             api('/obras?page=0&size=9999'),
             api('/obras-deterioradas?page=0&size=9999'),
         ]);
-        _tecnicas    = tec.status    === 'fulfilled' ? tec.value              : _tecnicas;
-        _tipos       = tip.status    === 'fulfilled' ? tip.value              : _tipos;
-        _personal    = per.status    === 'fulfilled' ? per.value              : _personal;
-        _obras       = obraPag.status=== 'fulfilled' ? obraPag.value.content  : _obras;
-        _deterioradas= det.status    === 'fulfilled' ? det.value.content      : _deterioradas;
+        _tecnicas    = tec.status    === 'fulfilled' ? tec.value             : _tecnicas;
+        _tipos       = tip.status    === 'fulfilled' ? tip.value             : _tipos;
+        _personal    = per.status    === 'fulfilled' ? per.value             : _personal;
+        _obras       = obraPag.status=== 'fulfilled' ? obraPag.value.content : _obras;
+        _deterioradas= det.status    === 'fulfilled' ? det.value.content     : _deterioradas;
     } catch (e) { toast('Error cargando datos del formulario', 'error'); return; }
 
     poblarSelect(f.querySelector('[name=idTecnica]'),       _tecnicas, t => t.id, t => t.nombre,                        'Seleccionar técnica...');
@@ -285,7 +290,8 @@ async function cargarSelectores(formId) {
     poblarSelect(f.querySelector('[name=idPersonal]'),      _personal, p => p.id, p => `${p.nombre} ${p.apellido}`,     'Sin asignar');
     poblarSelect(f.querySelector('[name=idPersonalMuseo]'), _personal, p => p.id, p => `${p.nombre} ${p.apellido}`,     'Sin asignar');
 
-    if (formId === 'form-deterioro')   iniciarAutocompleteObra('ac-obra-deterioro');
+    // Reinicializar autocomplete con datos actualizados
+    if (formId === 'form-deterioro')    iniciarAutocompleteObra('ac-obra-deterioro');
     if (formId === 'form-restauracion') iniciarAutocompleteDeteriorado('ac-deterioro-restauracion');
 }
 
