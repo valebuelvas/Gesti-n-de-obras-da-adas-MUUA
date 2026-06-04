@@ -463,7 +463,12 @@ async function cargarPaginaBusqueda() {
                     <td>#${o.id}</td><td>${o.titulo}</td><td>${o.autor || '—'}</td>
                     <td>${o.fechaCreacion ? o.fechaCreacion.split('-')[0] : '—'}</td>
                     <td>${o.tecnica?.nombre || '—'}</td>
-                    <td><button class="btn btn-secondary btn-sm" onclick="editarObra(${o.id})">✏️ Editar</button></td>
+                    <td>
+                        <div class="acciones-btns">
+                            <button class="btn btn-secondary btn-sm btn-icon" onclick="verDetalleObra(${o.id})" title="Ver detalle">👁</button>
+                            <button class="btn btn-secondary btn-sm btn-icon" onclick="editarObra(${o.id})" title="Editar">✏️</button>
+                        </div>
+                    </td>
                 </tr>
             `).join('');
         }
