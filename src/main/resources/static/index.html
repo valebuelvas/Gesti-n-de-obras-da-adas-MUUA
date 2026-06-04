@@ -71,31 +71,26 @@
             <p class="page-subtitle">Registro completo de obras del museo</p>
 
             <div class="card">
-                <div class="filters">
+                                <div class="filters">
                     <div class="form-group">
-                        <label>Buscar por título</label>
-                        <input type="text" id="filtro-titulo" placeholder="Título de la obra...">
+                        <label>Título</label>
+                        <input type="text" id="f-titulo" placeholder="Buscar por título...">
                     </div>
                     <div class="form-group">
                         <label>Autor</label>
-                        <input type="text" id="filtro-autor" placeholder="Nombre del autor...">
+                        <input type="text" id="f-autor" placeholder="Nombre del autor...">
                     </div>
-                    <div class="form-group">
-                        <label>Año</label>
-                        <input type="number" id="filtro-anio" placeholder="Ej: 1920">
-                    </div>
-                    <div class="form-group">
-                        <label>Técnica</label>
-                        <select id="filtro-tecnica">
-                            <option value="">Todas</option>
-                        </select>
-                    </div>
-                    <div>
+                    <div style="display:flex; gap:8px; align-items:flex-end">
                         <button class="btn btn-primary" onclick="buscarObras()">🔍 Buscar</button>
+                        <button class="btn btn-secondary" onclick="resetObras()">↺ Todo</button>
                     </div>
-                    <div>
-                        <button class="btn btn-secondary" onclick="cargarObras()">↺ Todo</button>
-                    </div>
+                </div>
+                
+                <!-- Paginación -->
+                <div id="paginacion" style="display:flex; justify-content:center; align-items:center; gap:12px; margin-top:16px; margin-bottom:4px;">
+                    <button class="btn btn-secondary btn-sm" id="btn-prev" onclick="cambiarPagina(-1)">← Anterior</button>
+                    <span id="info-pagina" style="font-size:.85rem; color:#555"></span>
+                    <button class="btn btn-secondary btn-sm" id="btn-next" onclick="cambiarPagina(1)">Siguiente →</button>
                 </div>
 
                 <div class="table-wrapper">
@@ -128,6 +123,11 @@
                 <div class="card-title">📋 Información de la Obra</div>
                 <form id="form-obra" onsubmit="submitObra(event)">
                     <div class="form-grid">
+
+                        <div class="form-group">
+                             <label>ID de Obra *</label>
+                             <input type="number" name="id" required placeholder="Ej: 1, 42">
+                        </div>
                         <div class="form-group full">
                             <label>Título *</label>
                             <input type="text" name="titulo" required placeholder="Título completo de la obra">
@@ -159,6 +159,30 @@
                         <div class="form-group">
                             <label>Ubicación</label>
                             <input type="text" name="ubicacion" placeholder="Sala, vitrina, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label>Dimensiones</label>
+                            <input name="dimensiones" placeholder="Ej: 80x60 cm">
+                        </div>
+                        <div class="form-group">
+                            <label>Integridad</label>
+                            <input name="integridad" placeholder="Estado de integridad...">
+                        </div>
+                        <div class="form-group">
+                            <label>Asociación Histórica</label>
+                            <input name="asociacionHistorica" placeholder="Contexto histórico...">
+                        </div>
+                        <div class="form-group">
+                            <label>Lugar de Ejecución</label>
+                            <input name="lugarEjecucion" placeholder="Ciudad, país...">
+                        </div>
+                        <div class="form-group">
+                            <label>Restricciones</label>
+                            <input name="restricciones" placeholder="Restricciones de uso...">
+                        </div>
+                        <div class="form-group full">
+                            <label>Anotaciones</label>
+                            <textarea name="anotaciones" placeholder="Notas adicionales..."></textarea>
                         </div>
                         <div class="form-group full">
                             <label>Link Drive</label>
@@ -213,6 +237,11 @@
 
             <div class="card" id="resultados-busqueda" style="display:none">
                 <div class="card-title">📋 Resultados</div>
+                <div id="paginacion-busqueda" style="display:none; justify-content:center; align-items:center; gap:12px; margin-bottom:8px;">
+                    <button class="btn btn-secondary btn-sm" id="btn-prev-busqueda" onclick="cambiarPaginaBusqueda(-1)">← Anterior</button>
+                    <span id="info-pagina-busqueda" style="font-size:.85rem; color:#555"></span>
+                    <button class="btn btn-secondary btn-sm" id="btn-next-busqueda" onclick="cambiarPaginaBusqueda(1)">Siguiente →</button>
+                </div>
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -236,9 +265,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Obra *</label>
-                            <select name="idObra" required>
-                                <option value="">Seleccionar obra...</option>
-                            </select>
+                            <div id="ac-obra-deterioro"></div>
                         </div>
                         <div class="form-group">
                             <label>Personal que reporta</label>
@@ -280,7 +307,7 @@
             <div class="card">
                 <div class="filters">
                     <div class="form-group">
-                        <label>Filtrar por Estado</label>
+                        <label>Estado</label>
                         <select id="filtro-estado-det">
                             <option value="">Todos los estados</option>
                             <option value="estado_regular">Estado Regular</option>
@@ -289,14 +316,36 @@
                             <option value="tratamiento_urgente">Tratamiento Urgente</option>
                         </select>
                     </div>
-                    <div>
-                        <button class="btn btn-primary" onclick="filtrarDeterioro()">🔍 Filtrar</button>
+                    <div class="form-group">
+                        <label>Autor de la Obra</label>
+                        <input id="filtro-autor-det" placeholder="Nombre del autor...">
                     </div>
-                    <div>
+                    <div class="form-group">
+                        <label>Técnica</label>
+                        <select id="filtro-tecnica-det">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Año de Creación</label>
+                        <input id="filtro-anio-det" type="number" placeholder="Ej: 1950">
+                    </div>
+                    <div class="form-group" style="justify-content:flex-end; padding-bottom:4px">
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer">
+                            <input type="checkbox" id="filtro-sin-restaurar" onchange="filtrarDeterioro()">
+                            Solo sin restauración finalizada
+                        </label>
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:flex-end">
+                        <button class="btn btn-primary" onclick="filtrarDeterioro()">🔍 Filtrar</button>
                         <button class="btn btn-secondary" onclick="cargarDeterioro()">↺ Todo</button>
                     </div>
                 </div>
-
+                <div id="paginacion-deterioro" style="display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:8px;">
+                     <button class="btn btn-secondary btn-sm" id="btn-prev-det" onclick="cambiarPaginaDet(-1)">← Anterior</button>
+                     <span id="info-pagina-det" style="font-size:.85rem; color:#555"></span>
+                     <button class="btn btn-secondary btn-sm" id="btn-next-det" onclick="cambiarPaginaDet(1)">Siguiente →</button>
+                </div>
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -328,9 +377,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Obra Deteriorada (Código) *</label>
-                            <select name="idObraDeteriorada" required>
-                                <option value="">Seleccionar obra deteriorada...</option>
-                            </select>
+                            <div id="ac-deterioro-restauracion"></div>
                         </div>
                         <div class="form-group">
                             <label>Personal del Museo</label>
@@ -400,7 +447,11 @@
                         <button class="btn btn-secondary" onclick="cargarRestauraciones()">↺ Todo</button>
                     </div>
                 </div>
-
+                <div id="paginacion-restauraciones" style="display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:8px;">
+                    <button class="btn btn-secondary btn-sm" id="btn-prev-rest" onclick="cambiarPaginaRest(-1)">← Anterior</button>
+                    <span id="info-pagina-rest" style="font-size:.85rem; color:#555"></span>
+                    <button class="btn btn-secondary btn-sm" id="btn-next-rest" onclick="cambiarPaginaRest(1)">Siguiente →</button>
+                </div>
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -507,6 +558,30 @@
                         <label>Ubicación</label>
                         <input type="text" name="ubicacion">
                     </div>
+                    <div class="form-group">
+                        <label>Dimensiones</label>
+                        <input name="dimensiones" placeholder="Ej: 80x60 cm">
+                    </div>
+                    <div class="form-group">
+                        <label>Integridad</label>
+                        <input name="integridad" placeholder="Estado de integridad...">
+                    </div>
+                    <div class="form-group">
+                        <label>Asociación Histórica</label>
+                        <input name="asociacionHistorica" placeholder="Contexto histórico...">
+                    </div>
+                    <div class="form-group">
+                        <label>Lugar de Ejecución</label>
+                        <input name="lugarEjecucion" placeholder="Ciudad, país...">
+                    </div>
+                    <div class="form-group">
+                        <label>Restricciones</label>
+                        <input name="restricciones" placeholder="Restricciones de uso...">
+                    </div>
+                    <div class="form-group full">
+                        <label>Anotaciones</label>
+                        <textarea name="anotaciones" placeholder="Notas adicionales..."></textarea>
+                    </div>
                     <div class="form-group full">
                         <label>Link Drive</label>
                         <input type="url" name="linkDrive">
@@ -533,7 +608,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Obra *</label>
-                        <select name="idObra" required></select>
+                         <div id="ac-obra-edit-deterioro"></div>
                     </div>
                     <div class="form-group">
                         <label>Personal</label>
@@ -578,7 +653,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Obra Deteriorada *</label>
-                        <select name="idObraDeteriorada" required></select>
+                        <div id="ac-deterioro-edit-restauracion"></div>
                     </div>
                     <div class="form-group">
                         <label>Personal</label>
@@ -629,6 +704,7 @@
         <div class="modal-body">
             <form id="form-personal" onsubmit="submitPersonal(event)">
                 <input type="hidden" name="modo">
+                <input type="hidden" name="_id_viejo">
                 <div class="form-grid">
                     <div class="form-group" id="campo-cedula">
                         <label>Cédula *</label>
@@ -650,6 +726,26 @@
                         <label>Celular *</label>
                         <input type="text" name="celular" required>
                     </div>
+                    <div class="form-group">
+                        <label>Rol</label>
+                        <select name="rol">
+                            <option value="">Colaborador (por defecto)</option>
+                            <option value="colaborador">Colaborador</option>
+                            <option value="administrador">Administrador</option>
+                            <option value="no_perteneciente">No perteneciente</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="campo-password">
+                        <label id="label-password">Contraseña *</label>
+                        <input type="password" name="password" placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmar Contraseña</label>
+                        <input type="password" name="confirmarPassword" placeholder="••••••••">
+                    </div>
+                    <div class="form-group full" id="hint-password" style="display:none">
+                        <small style="color:#888">Deja en blanco para mantener la contraseña actual</small>
+                    </div>
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="cerrarModal('modal-personal')">Cancelar</button>
@@ -659,7 +755,38 @@
         </div>
     </div>
 </div>
+<!-- Modal Detalle Obra -->
+<div class="modal-overlay" id="modal-detalle-obra">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>👁 Detalle de Obra</h3>
+            <button class="modal-close" onclick="cerrarModal('modal-detalle-obra')">×</button>
+        </div>
+        <div class="modal-body" id="detalle-obra-body"></div>
+    </div>
+</div>
 
+<!-- Modal Detalle Deterioro -->
+<div class="modal-overlay" id="modal-detalle-deterioro">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>👁 Detalle de Deterioro</h3>
+            <button class="modal-close" onclick="cerrarModal('modal-detalle-deterioro')">×</button>
+        </div>
+        <div class="modal-body" id="detalle-deterioro-body"></div>
+    </div>
+</div>
+
+<!-- Modal Detalle Restauracion -->
+<div class="modal-overlay" id="modal-detalle-restauracion">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>👁 Detalle de Restauración</h3>
+            <button class="modal-close" onclick="cerrarModal('modal-detalle-restauracion')">×</button>
+        </div>
+        <div class="modal-body" id="detalle-restauracion-body"></div>
+    </div>
+</div>
 <script src="js/museo-app.js"></script>
 
 </body>

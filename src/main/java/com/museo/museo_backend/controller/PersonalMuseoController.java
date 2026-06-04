@@ -13,6 +13,10 @@ public class PersonalMuseoController {
     @GetMapping public ResponseEntity<List<PersonalMuseo>> listarTodos() { return ResponseEntity.ok(service.listarTodos()); }
     @GetMapping("/{id}") public ResponseEntity<PersonalMuseo> buscarPorId(@PathVariable Integer id) { return ResponseEntity.ok(service.buscarPorId(id)); }
     @PostMapping public ResponseEntity<PersonalMuseo> crear(@Valid @RequestBody PersonalMuseoRequest req) { return ResponseEntity.ok(service.crear(req)); }
-    @PutMapping("/{id}") public ResponseEntity<PersonalMuseo> editar(@PathVariable Integer id, @Valid @RequestBody PersonalMuseoRequest req) { return ResponseEntity.ok(service.editar(id, req)); }
+   @PutMapping("/{id}")
+public ResponseEntity<PersonalMuseo> editar(@PathVariable Integer id,
+                                             @Valid @RequestBody PersonalMuseoRequest request) {
+    return ResponseEntity.ok(service.editarConId(id, request));
+}
 }
 

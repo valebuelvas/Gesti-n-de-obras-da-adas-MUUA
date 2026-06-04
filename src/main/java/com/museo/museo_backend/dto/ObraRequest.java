@@ -4,6 +4,8 @@ import lombok.*;
 import java.time.LocalDate;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class ObraRequest {
+    @NotNull(message = "El ID de la obra es obligatorio")
+    private Integer id;
     @NotBlank(message="El titulo es obligatorio") private String titulo;
     private String autor;
     private LocalDate fechaCreacion;
@@ -12,4 +14,10 @@ public class ObraRequest {
     private String ubicacion;
     private String linkDrive;
     @NotNull(message="La tecnica es obligatoria") private Integer idTecnica;
+    private String dimensiones;
+    private String integridad;
+    private String asociacionHistorica;
+    private String lugarEjecucion;
+    private String restricciones;
+    private String anotaciones;
 }
