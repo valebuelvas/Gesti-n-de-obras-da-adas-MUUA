@@ -467,6 +467,7 @@ async function cargarPaginaBusqueda() {
                         <div class="acciones-btns">
                             <button class="btn btn-secondary btn-sm btn-icon" onclick="verDetalleObra(${o.id})" title="Ver detalle">👁</button>
                             <button class="btn btn-secondary btn-sm btn-icon" onclick="editarObra(${o.id})" title="Editar">✏️</button>
+                            ${o.linkDrive ? `<a href="${o.linkDrive}" target="_blank" class="btn btn-secondary btn-sm btn-icon" title="Drive">📎</a>` : ''}
                         </div>
                     </td>
                 </tr>
