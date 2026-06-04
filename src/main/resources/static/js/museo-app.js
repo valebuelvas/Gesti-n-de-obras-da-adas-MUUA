@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (section) section.style.display = 'none';
         });
     }
-    const header = document.querySelector('.header-title');
+    const header = document.querySelector('header');
     if (header) {
         const userInfo = document.createElement('div');
         userInfo.style.cssText = 'font-size:.8rem; font-weight:400; margin-left:auto; display:flex; align-items:center; gap:12px;';
